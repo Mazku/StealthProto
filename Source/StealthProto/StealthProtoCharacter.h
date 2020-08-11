@@ -75,6 +75,8 @@ protected:
 
 	void ToggleSneak(bool active);
 
+	void Tick(float DeltaSeconds);
+
 protected:
 	// APawn interface
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;

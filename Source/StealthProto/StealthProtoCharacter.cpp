@@ -8,6 +8,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/Controller.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "DrawDebugHelpers.h"
 
 //////////////////////////////////////////////////////////////////////////
 // AStealthProtoCharacter
@@ -50,6 +51,8 @@ AStealthProtoCharacter::AStealthProtoCharacter()
 
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named MyCharacter (to avoid direct content references in C++)
+
+	PrimaryActorTick.bCanEverTick = true;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -161,5 +164,16 @@ void AStealthProtoCharacter::ToggleSneak(bool active)
 	{
 		GetCharacterMovement()->MaxWalkSpeed = DefaultMovementSpeed;
 		GetCharacterMovement()->JumpZVelocity = DefaultVerticalSpeed;
+	}
+}
+
+// Called every frame.
+void AStealthProtoCharacter::Tick(float DeltaSeconds)
+{
+	Super::Tick(DeltaSeconds);
+	if (GetCharacterMovement()->IsMovingOnGround())
+	{
+		FVector currentVelocity = GetVelocity();
+		DrawDebugSphere(GetWorld(), GetActorLocation(), currentVelocity.Size(), 200, FColor(52, 220, 239));
 	}
 }
