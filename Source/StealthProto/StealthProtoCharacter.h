@@ -19,6 +19,12 @@ class AStealthProtoCharacter : public ACharacter
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class UCameraComponent* FollowCamera;
 
+	UPROPERTY()
+	float DefaultMovementSpeed;
+
+	UPROPERTY()
+	float DefaultVerticalSpeed;
+
 public:
 	AStealthProtoCharacter();
 
@@ -29,6 +35,10 @@ public:
 	/** Base look up/down rate, in deg/sec. Other scaling may affect final rate. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Camera)
 	float BaseLookUpRate;
+
+	/** Factor how much sneaking slows down the movement speed */
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Stealth)
+	float SneakSlowFactor;
 
 protected:
 
@@ -59,6 +69,11 @@ protected:
 	/** Handler for when a touch input stops. */
 	void TouchStopped(ETouchIndex::Type FingerIndex, FVector Location);
 
+	void Sneak();
+
+	void StopSneak();
+
+	void ToggleSneak(bool active);
 
 protected:
 	// APawn interface

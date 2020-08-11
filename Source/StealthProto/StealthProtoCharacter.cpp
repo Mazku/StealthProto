@@ -21,6 +21,7 @@ AStealthProtoCharacter::AStealthProtoCharacter()
 	BaseTurnRate = 45.f;
 	BaseLookUpRate = 45.f;
 
+	SneakSlowFactor = 0.3f;
 
 	// Don't rotate when the controller rotates. Let that just affect the camera.
 	bUseControllerRotationPitch = false;
@@ -33,6 +34,8 @@ AStealthProtoCharacter::AStealthProtoCharacter()
 	GetCharacterMovement()->JumpZVelocity = 600.f;
 	GetCharacterMovement()->AirControl = 0.2f;
 
+	DefaultMovementSpeed = GetCharacterMovement()->MaxWalkSpeed;
+	DefaultVerticalSpeed = GetCharacterMovement()->JumpZVelocity;
 
 	// Create a camera boom (pulls in towards the player if there is a collision)
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
@@ -58,6 +61,8 @@ void AStealthProtoCharacter::SetupPlayerInputComponent(class UInputComponent* Pl
 	check(PlayerInputComponent);
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
 	PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
+	PlayerInputComponent->BindAction("Sneak", IE_Pressed, this, &AStealthProtoCharacter::Sneak);
+	PlayerInputComponent->BindAction("Sneak", IE_Released, this, &AStealthProtoCharacter::StopSneak);
 
 	PlayerInputComponent->BindAxis("MoveForward", this, &AStealthProtoCharacter::MoveForward);
 	PlayerInputComponent->BindAxis("MoveRight", this, &AStealthProtoCharacter::MoveRight);
@@ -135,3 +140,26 @@ void AStealthProtoCharacter::MoveRight(float Value)
 	}
 }
 
+void AStealthProtoCharacter::Sneak()
+{
+	ToggleSneak(true);
+}
+
+void AStealthProtoCharacter::StopSneak()
+{
+	ToggleSneak(false);
+}
+
+void AStealthProtoCharacter::ToggleSneak(bool active)
+{
+	if (active)
+	{
+		GetCharacterMovement()->MaxWalkSpeed = DefaultMovementSpeed * SneakSlowFactor;
+		GetCharacterMovement()->JumpZVelocity = DefaultVerticalSpeed * SneakSlowFactor;
+	}
+	else 
+	{
+		GetCharacterMovement()->MaxWalkSpeed = DefaultMovementSpeed;
+		GetCharacterMovement()->JumpZVelocity = DefaultVerticalSpeed;
+	}
+}
