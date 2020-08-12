@@ -171,9 +171,19 @@ void AStealthProtoCharacter::ToggleSneak(bool active)
 void AStealthProtoCharacter::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
+	float soundDistance = GetSoundDistance();
+	if (soundDistance > 0.0f)
+	{
+		DrawDebugSphere(GetWorld(), GetActorLocation(), soundDistance, 200, FColor(52, 220, 239));
+	}
+}
+
+float AStealthProtoCharacter::GetSoundDistance()
+{
 	if (GetCharacterMovement()->IsMovingOnGround())
 	{
 		FVector currentVelocity = GetVelocity();
-		DrawDebugSphere(GetWorld(), GetActorLocation(), currentVelocity.Size(), 200, FColor(52, 220, 239));
+		return currentVelocity.Size();
 	}
+	return 0.0f;
 }
