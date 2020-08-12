@@ -22,6 +22,10 @@ void ADetector::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	Active = true;
+	float activeDurationInSeconds = (float)ActiveDuration.GetTotalSeconds();
+	// Offset active started to have happened between 0 to activeDuration * 0.5. So not every detector have synchronized activations
+	ToggleStarted = FDateTime::Now() + FTimespan::FromSeconds(FMath::RandRange(0.0f, activeDurationInSeconds * 0.5f));
 }
 
 // Called every frame
@@ -78,6 +82,7 @@ void ADetector::Detected()
 	if (Active)
 	{
 		ModeStarted = FDateTime::Now();
+		ToggleStarted = FDateTime::Now();
 		Alarmed = true;
 		UpdateDetectorState();
 	}
@@ -88,6 +93,7 @@ void ADetector::CloseCall()
 	if (Active)
 	{
 		ModeStarted = FDateTime::Now();
+		ToggleStarted = FDateTime::Now();
 		Concerned = true;
 		UpdateDetectorState();
 	}
