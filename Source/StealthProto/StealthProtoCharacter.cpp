@@ -53,6 +53,14 @@ AStealthProtoCharacter::AStealthProtoCharacter()
 	// are set in the derived blueprint asset named MyCharacter (to avoid direct content references in C++)
 
 	PrimaryActorTick.bCanEverTick = true;
+
+	DetectedTextRender = CreateDefaultSubobject<UTextRenderComponent>(TEXT("DetectedTextRender"));
+	DetectedTextRender->SetText(TEXT("Detected!"));
+	DetectedTextRender->SetHorizontalAlignment(EHorizTextAligment::EHTA_Center);
+	DetectedTextRender->SetRelativeLocation(FVector(300.0f, 0, GetDefaultHalfHeight()));
+	DetectedTextRender->SetRelativeRotation(FRotator(0, 180.0f, 0));
+	DetectedTextRender->SetTextRenderColor(FColor(52, 220, 239));
+	DetectedTextRender->SetupAttachment(CameraBoom);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -154,6 +162,9 @@ void AStealthProtoCharacter::Tick(float DeltaSeconds)
 	{
 		DrawDebugSphere(GetWorld(), GetActorLocation(), soundDistance, 200, FColor(52, 220, 239));
 	}
+
+	DetectedTextRender->SetHiddenInGame(!Detected);
+	Detected = false;
 }
 
 float AStealthProtoCharacter::GetSoundDistance()
@@ -164,4 +175,9 @@ float AStealthProtoCharacter::GetSoundDistance()
 		return currentVelocity.Size();
 	}
 	return 0.0f;
+}
+
+void AStealthProtoCharacter::DetectedThisTick()
+{
+	Detected = true;
 }

@@ -2,6 +2,9 @@
 
 
 #include "Detector.h"
+#include "Kismet/GameplayStatics.h"
+#include "StealthProtoCharacter.h"
+#include "DrawDebugHelpers.h"
 
 // Sets default values
 ADetector::ADetector()
@@ -57,6 +60,12 @@ void ADetector::Tick(float DeltaTime)
 		ModeStarted = now;
 	}
 	UpdateDetectorState();
+
+	if (Active && Alarmed)
+	{
+		AStealthProtoCharacter * player = (AStealthProtoCharacter*)UGameplayStatics::GetPlayerCharacter(GetWorld(), 0);
+		player->DetectedThisTick();
+	}
 }
 
 void ADetector::UpdateDetectorState()

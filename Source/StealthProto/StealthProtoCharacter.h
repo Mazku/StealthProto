@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "Components/TextRenderComponent.h"
 #include "StealthProtoCharacter.generated.h"
 
 UCLASS(config=Game)
@@ -24,6 +25,12 @@ class AStealthProtoCharacter : public ACharacter
 
 	UPROPERTY()
 	float DefaultVerticalSpeed;
+
+	UPROPERTY()
+	bool Detected;
+
+	UPROPERTY()
+	UTextRenderComponent *DetectedTextRender;
 
 public:
 	AStealthProtoCharacter();
@@ -80,5 +87,7 @@ public:
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
 
 	float GetSoundDistance();
+
+	void DetectedThisTick();
 };
 
