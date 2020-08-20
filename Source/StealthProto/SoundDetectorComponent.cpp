@@ -5,6 +5,7 @@
 #include "StealthProtoCharacter.h"
 #include "EngineUtils.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values for this component's properties
 USoundDetectorComponent::USoundDetectorComponent()
@@ -32,29 +33,21 @@ void USoundDetectorComponent::TickComponent(float DeltaTime, ELevelTick TickType
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	AStealthProtoCharacter* player = nullptr;
-	for (TActorIterator<AStealthProtoCharacter> It(GetWorld()); It; ++It)
+	AStealthProtoCharacter * player = (AStealthProtoCharacter*)UGameplayStatics::GetPlayerCharacter(GetWorld(), 0);
+	float soundDistance = player->GetSoundDistance();
+	if (soundDistance > 0.0f)
 	{
-		player = *It;
-	}
-	if (player != nullptr)
-	{
-		float soundDistance = player->GetSoundDistance();
-		if (soundDistance > 0.0f)
-		{
-			FVector playerLocation = player->GetActorLocation();
-			FVector detectorLocation = Detector->GetActorLocation();
+		FVector playerLocation = player->GetActorLocation();
+		FVector detectorLocation = Detector->GetActorLocation();
 
-			if (FVector::Distance(playerLocation, detectorLocation) < soundDistance * AlarmRatio)
-			{
-				Detector->Detected();
-			}
-			if (FVector::Distance(playerLocation, detectorLocation) < soundDistance)
-			{
-				Detector->CloseCall();
-			}
+		if (FVector::Distance(playerLocation, detectorLocation) < soundDistance * AlarmRatio)
+		{
+			Detector->Detected();
+		}
+		if (FVector::Distance(playerLocation, detectorLocation) < soundDistance)
+		{
+			Detector->CloseCall();
 		}
 	}
-
 }
 

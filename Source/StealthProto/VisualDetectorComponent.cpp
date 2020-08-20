@@ -3,9 +3,8 @@
 
 #include "VisualDetectorComponent.h"
 #include "DrawDebugHelpers.h"
-#include "SceneView.h"
 #include "StealthProtoCharacter.h"
-#include "EngineUtils.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values for this component's properties
 UVisualDetectorComponent::UVisualDetectorComponent()
@@ -37,11 +36,7 @@ void UVisualDetectorComponent::TickComponent(float DeltaTime, ELevelTick TickTyp
 	FVector detectorLocation = Detector->GetActorLocation();
 	FVector detectorForward = Detector->GetActorForwardVector();
 
-	AStealthProtoCharacter* player = nullptr;
-	for (TActorIterator<AStealthProtoCharacter> It(GetWorld()); It; ++It)
-	{
-		player = *It;
-	}
+	AStealthProtoCharacter* player = (AStealthProtoCharacter*)UGameplayStatics::GetPlayerCharacter(GetWorld(), 0);
 	FVector playerLocation = player->GetActorLocation();
 
 	FVector traceForward = playerLocation - detectorLocation;
