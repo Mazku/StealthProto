@@ -43,7 +43,7 @@ void USoundDetectorComponent::TickComponent(float DeltaTime, ELevelTick TickType
 		if (soundDistance > 0.0f)
 		{
 			FVector playerLocation = player->GetActorLocation();
-			FVector detectorLocation = GetOwner()->GetActorLocation();
+			FVector detectorLocation = Detector->GetActorLocation();
 
 			if (FVector::Distance(playerLocation, detectorLocation) < soundDistance * AlarmRatio)
 			{
