@@ -9,6 +9,7 @@
 #include "GameFramework/Controller.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "DrawDebugHelpers.h"
+#include "Kismet/GameplayStatics.h"
 
 //////////////////////////////////////////////////////////////////////////
 // AStealthProtoCharacter
@@ -163,8 +164,7 @@ void AStealthProtoCharacter::Tick(float DeltaSeconds)
 		DrawDebugSphere(GetWorld(), GetActorLocation(), soundDistance, 200, FColor(52, 220, 239));
 	}
 
-	DetectedTextRender->SetHiddenInGame(!Detected);
-	Detected = false;
+	DetectedTextRender->SetHiddenInGame(DetectedAt + DeltaSeconds < UGameplayStatics::GetRealTimeSeconds(GetWorld()));
 }
 
 float AStealthProtoCharacter::GetSoundDistance()
@@ -177,7 +177,8 @@ float AStealthProtoCharacter::GetSoundDistance()
 	return 0.0f;
 }
 
-void AStealthProtoCharacter::DetectedThisTick()
+void AStealthProtoCharacter::DetectedFor(float seconds)
 {
-	Detected = true;
+	// Update the time when player was last detected and how long will it last
+	DetectedAt = UGameplayStatics::GetRealTimeSeconds(GetWorld()) + seconds;
 }

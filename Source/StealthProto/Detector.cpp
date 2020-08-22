@@ -60,12 +60,6 @@ void ADetector::Tick(float DeltaTime)
 		ModeStarted = now;
 	}
 	UpdateDetectorState();
-
-	if (Active && Alarmed)
-	{
-		AStealthProtoCharacter * player = (AStealthProtoCharacter*)UGameplayStatics::GetPlayerCharacter(GetWorld(), 0);
-		player->DetectedThisTick();
-	}
 }
 
 void ADetector::UpdateDetectorState()
@@ -94,6 +88,9 @@ void ADetector::Detected()
 		ToggleStarted = FDateTime::Now();
 		Alarmed = true;
 		UpdateDetectorState();
+
+		AStealthProtoCharacter * player = (AStealthProtoCharacter*)UGameplayStatics::GetPlayerCharacter(GetWorld(), 0);
+		player->DetectedFor(ResetDuration.GetTotalSeconds());
 	}
 }
 

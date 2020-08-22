@@ -27,7 +27,7 @@ class AStealthProtoCharacter : public ACharacter
 	float DefaultVerticalSpeed;
 
 	UPROPERTY()
-	bool Detected;
+	float DetectedAt;
 
 	UPROPERTY()
 	UTextRenderComponent *DetectedTextRender;
@@ -88,6 +88,6 @@ public:
 
 	float GetSoundDistance();
 
-	void DetectedThisTick();
+	void DetectedFor(float seconds);
 };
 
