@@ -29,6 +29,38 @@ void UVisualDetectorComponent::BeginPlay()
 
 }
 
+TraceStatus UVisualDetectorComponent::CheckPlayerVisibility(FVector start, FVector end, FVector forward, AActor* player)
+{
+	FVector traceForward = end - start;
+	traceForward.Normalize();
+	float angleToPlayer = FMath::Acos(FVector::DotProduct(forward, traceForward));
+	float distanceToPlayer = FVector::Distance(start, end);
+	FCollisionQueryParams CollisionParams;
+	CollisionParams.AddIgnoredActor(Detector);
+	FHitResult OutHit;
+
+	bool playerHit = false;
+	if (GetWorld()->LineTraceSingleByChannel(OutHit, start, end, ECC_GameTraceChannel3, CollisionParams))
+	{
+		if (OutHit.Actor == player)
+		{
+			playerHit = true;
+		}
+	}
+	bool playerInCone = angleToPlayer < VisualAngle && distanceToPlayer < VisualDistance;
+
+	if (playerHit && playerInCone)
+	{
+		if (distanceToPlayer < VisualDistance * AlarmRatio)
+		{
+			return TraceStatus::Detected;
+		}
+		return TraceStatus::CloseCall;
+	}
+	return TraceStatus::NotDetected;
+
+}
+
 // Called every frame
 void UVisualDetectorComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
@@ -40,37 +72,17 @@ void UVisualDetectorComponent::TickComponent(float DeltaTime, ELevelTick TickTyp
 	AStealthProtoCharacter* player = (AStealthProtoCharacter*)UGameplayStatics::GetPlayerCharacter(GetWorld(), 0);
 	FVector playerLocation = player->GetActorLocation();
 
-	FVector traceForward = playerLocation - detectorLocation;
-	traceForward.Normalize();
-	float angleToPlayer = FMath::Acos(FVector::DotProduct(detectorForward, traceForward));
-	float distanceToPlayer = FVector::Distance(detectorLocation, playerLocation);
-
-	FVector Start = detectorLocation;
-	FVector End = playerLocation;
-	FCollisionQueryParams CollisionParams;
-	CollisionParams.AddIgnoredActor(Detector);
-	FHitResult OutHit;
-
-	bool playerHit = false;
-	if (GetWorld()->LineTraceSingleByChannel(OutHit, Start, End, ECC_GameTraceChannel3, CollisionParams))
-	{
-		if (OutHit.Actor == player)
-		{
-			playerHit = true;
-		}
-	}
-	bool playerInCone = angleToPlayer < VisualAngle && distanceToPlayer < VisualDistance;
-
-	bool playerDetected = false;
-	if (playerHit && playerInCone)
-	{
-		playerDetected = true;
-	}
+	// Check detection by tracing player character vertically from center and quarter up and down
+	FVector quarterModifier(0, 0, player->GetDefaultHalfHeight() / 2.0f);
+	TraceStatus playerDetected = FMath::Max3(
+		CheckPlayerVisibility(detectorLocation, playerLocation, detectorForward, player), 
+		CheckPlayerVisibility(detectorLocation, playerLocation + quarterModifier, detectorForward, player), 
+		CheckPlayerVisibility(detectorLocation, playerLocation - quarterModifier, detectorForward, player));
 
 	FColor coneColor = FColor::Green;
-	if (playerDetected)
+	if (playerDetected > TraceStatus::NotDetected)
 	{
-		if (distanceToPlayer < VisualDistance * AlarmRatio)
+		if (playerDetected == TraceStatus::Detected)
 		{
 			coneColor = FColor::Red;
 			Detector->Detected();

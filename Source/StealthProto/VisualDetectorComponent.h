@@ -7,6 +7,12 @@
 #include "Detector.h"
 #include "VisualDetectorComponent.generated.h"
 
+enum TraceStatus
+{
+	NotDetected,
+	CloseCall,
+	Detected,
+};
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class STEALTHPROTO_API UVisualDetectorComponent : public UActorComponent
@@ -15,6 +21,8 @@ class STEALTHPROTO_API UVisualDetectorComponent : public UActorComponent
 
 	UPROPERTY()
 	ADetector* Detector;
+
+	TraceStatus CheckPlayerVisibility(FVector start, FVector end, FVector forward, AActor* player);
 
 public:	
 	// Sets default values for this component's properties
