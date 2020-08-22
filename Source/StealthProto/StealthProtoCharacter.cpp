@@ -180,5 +180,5 @@ float AStealthProtoCharacter::GetSoundDistance()
 void AStealthProtoCharacter::DetectedFor(float seconds)
 {
 	// Update the time when player was last detected and how long will it last
-	DetectedAt = UGameplayStatics::GetRealTimeSeconds(GetWorld()) + seconds;
+	DetectedAt = FMath::Max(DetectedAt, UGameplayStatics::GetRealTimeSeconds(GetWorld()) + seconds);
 }
