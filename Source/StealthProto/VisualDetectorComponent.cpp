@@ -31,34 +31,33 @@ void UVisualDetectorComponent::BeginPlay()
 
 TraceStatus UVisualDetectorComponent::CheckPlayerVisibility(FVector start, FVector end, FVector forward, AActor* player)
 {
-	FVector traceForward = end - start;
-	traceForward.Normalize();
-	float angleToPlayer = FMath::Acos(FVector::DotProduct(forward, traceForward));
-	float distanceToPlayer = FVector::Distance(start, end);
 	FCollisionQueryParams CollisionParams;
 	CollisionParams.AddIgnoredActor(Detector);
 	FHitResult OutHit;
 
-	bool playerHit = false;
 	if (GetWorld()->LineTraceSingleByChannel(OutHit, start, end, ECC_GameTraceChannel3, CollisionParams))
 	{
 		if (OutHit.Actor == player)
 		{
-			playerHit = true;
-		}
-	}
-	bool playerInCone = angleToPlayer < VisualAngle && distanceToPlayer < VisualDistance;
+			float distanceToPlayer = FVector::Distance(start, end);
+			FVector traceForward = end - start;
+			traceForward.Normalize();
 
-	if (playerHit && playerInCone)
-	{
-		if (distanceToPlayer < VisualDistance * AlarmRatio)
-		{
-			return TraceStatus::Detected;
+			float angleToPlayer = FMath::Acos(FVector::DotProduct(forward, traceForward));
+			bool playerInCone = angleToPlayer < VisualAngle && distanceToPlayer < VisualDistance;
+
+			if (playerInCone)
+			{
+				if (distanceToPlayer < VisualDistance * AlarmRatio)
+				{
+					return TraceStatus::Detected;
+				}
+				return TraceStatus::CloseCall;
+			}
 		}
-		return TraceStatus::CloseCall;
 	}
+
 	return TraceStatus::NotDetected;
-
 }
 
 // Called every frame
