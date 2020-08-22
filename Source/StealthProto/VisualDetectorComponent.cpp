@@ -14,7 +14,7 @@ UVisualDetectorComponent::UVisualDetectorComponent()
 	PrimaryComponentTick.bCanEverTick = true;
 	PrimaryComponentTick.TickGroup = TG_EndPhysics;
 
-	AlarmRatio = 0.7f;
+	AlarmRatio = 0.8f;
 	VisualDistance = 1000.0f;
 	VisualAngle = FMath::DegreesToRadians(25.0f);
 }
