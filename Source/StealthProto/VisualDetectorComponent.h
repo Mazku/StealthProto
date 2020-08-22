@@ -7,17 +7,18 @@
 #include "Detector.h"
 #include "VisualDetectorComponent.generated.h"
 
-enum TraceStatus
-{
-	NotDetected,
-	CloseCall,
-	Detected,
-};
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class STEALTHPROTO_API UVisualDetectorComponent : public UActorComponent
 {
 	GENERATED_BODY()
+
+	enum TraceStatus
+	{
+		NotDetected,
+		CloseCall,
+		Detected,
+	};
 
 	UPROPERTY()
 	ADetector* Detector;

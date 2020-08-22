@@ -29,7 +29,7 @@ void UVisualDetectorComponent::BeginPlay()
 
 }
 
-TraceStatus UVisualDetectorComponent::CheckPlayerVisibility(FVector start, FVector end, FVector forward, AActor* player)
+UVisualDetectorComponent::TraceStatus UVisualDetectorComponent::CheckPlayerVisibility(FVector start, FVector end, FVector forward, AActor* player)
 {
 	FCollisionQueryParams CollisionParams;
 	CollisionParams.AddIgnoredActor(Detector);
