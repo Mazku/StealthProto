@@ -6,6 +6,8 @@ Uses Unreal Engine version 4.25.
 # About
 This prototype is only for testing a stealth game system, without any gameplay content. Player can run or walk/sneak around the level (hold down left shift to sneak) and try to avoid different types of detectors. Sneaking makes less noise than running as player makes noise based on their movement speed, note that moving in the air is silent.
 
+**Please run in debug mode, as this prototype is using debug draw elements to indicate noise created and visual detecting zones**
+
 ## Detectors
 There are two types of detectors: sound and visual detectors. When detector detects the player it will turn red and stay alarmed for a specific time. Detectors also have a dead zone where they will not be alarmed but will turn yellow to indicate that they are cautios.
 
